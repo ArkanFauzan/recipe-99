@@ -16,7 +16,7 @@
 
 */
 import React, { useState, useContext} from "react";
-import {GlobalContext} from '../../index';
+import {GlobalContext} from '../../GlobalContext';
 import {Link} from 'react-router-dom';
 
 // reactstrap components

@@ -16,7 +16,7 @@
 
 */
 import React, { useState, useContext} from "react";
-import {GlobalContext} from '../../index';
+import {GlobalContext} from '../../GlobalContext';
 import {Link} from 'react-router-dom';
 
 // reactstrap components
@@ -45,7 +45,7 @@ import SimpleFooter from "components/Footers/SimpleFooter.js";
 import axios from 'axios';
 
 const Login = ()=>{
-  const {BASE_URL} = useContext(GlobalContext);
+  const {BASE_URL,cookie} = useContext(GlobalContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -80,7 +80,12 @@ const Login = ()=>{
       }
       axios.post(`${BASE_URL}/login`, data).then(res=>{
         if(res.status===200){
-          alert('Login Success')
+          cookie.setCookie('token',res.data.token,17);
+          cookie.setCookie('id',res.data.user.id,17);
+          cookie.setCookie('name',res.data.user.name,17);
+          cookie.setCookie('email',res.data.user.email,17);
+
+          window.location.href = '/recipes'
         }
       }).catch(error=>{
         setErr({

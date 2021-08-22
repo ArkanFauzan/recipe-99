@@ -19,6 +19,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 // JavaScript plugin that hides or shows a component based on your scroll
 import Headroom from "headroom.js";
+// import global context
+import {GlobalContext} from '../../GlobalContext';
 // reactstrap components
 import {
   Button,
@@ -36,15 +38,26 @@ import {
   Col,
 } from "reactstrap";
 
+import axios from 'axios';
+
 class DemoNavbar extends React.Component {
   componentDidMount() {
     let headroom = new Headroom(document.getElementById("navbar-main"));
     // initialise
     headroom.init();
+
+    // check the user (logged or not)
+    this.getUser();
   }
   state = {
     collapseClasses: "",
-    collapseOpen: false
+    collapseOpen: false,
+    logged: {
+      status: false,
+      id: "halo",
+      name: "",
+      email: ""
+    }
   };
 
   onExiting = () => {
@@ -59,6 +72,50 @@ class DemoNavbar extends React.Component {
     });
   };
 
+  static contextType = GlobalContext;
+
+  // check the user (logged or not)
+  getUser = async ()=>{
+    const {BASE_URL, cookie} = this.context;
+    const token = cookie.getCookie('token');
+    if(token==='') {return};
+
+    await axios.get(`${BASE_URL}/get-user`,{
+      headers:{
+        "token" : token
+      }
+    }).then(res=>{
+      if(res.status===200){
+        let user = res.data.user;
+        this.setState(prev=>
+          prev.logged={
+            status: true,
+            id: user.id,
+            name: user.name,
+            email: user.email
+          }
+        )
+      }
+    })
+  }
+
+  logout = ()=>{
+    const {cookie} = this.context;
+    cookie.setCookie('token','',-1);
+    cookie.setCookie('id','',-1);
+    cookie.setCookie('name','',-1);
+    cookie.setCookie('email','',-1);
+    this.setState(prev=>
+      prev.logged={
+        status: false,
+        id: '',
+        name: '',
+        email: ''
+      }
+    )
+    window.location.href = '/recipes';
+  }
+
   render() {
     return (
       <>
@@ -67,7 +124,7 @@ class DemoNavbar extends React.Component {
             className="navbar-main navbar-transparent navbar-light headroom"
             expand="lg"
             id="navbar-main"
-          >
+            >
             <Container>
               <NavbarBrand className="mr-lg-5" to="/" tag={Link}>
                 <img
@@ -104,42 +161,72 @@ class DemoNavbar extends React.Component {
                   </Row>
                 </div>
                 <Nav className="navbar-nav-hover align-items-lg-center ml-lg-auto" navbar>
-                <span>
-                      <i className="ni ni-collection d-lg-none mr-1" />
-                      <Link to="/recipes" className="text-white">Explore Recipes</Link>
-                </span>
-                  <UncontrolledDropdown nav>
-                    <DropdownToggle nav>
-                      <i className="ni ni-collection d-lg-none mr-1" />
-                      <span className="nav-link-inner--text">Examples</span>
-                    </DropdownToggle>
-                    <DropdownMenu>
-                      <DropdownItem to="/landing-page" tag={Link}>
-                        Landing
-                      </DropdownItem>
-                      <DropdownItem to="/profile-page" tag={Link}>
-                        Profile
-                      </DropdownItem>
-                      <DropdownItem to="/login-page" tag={Link}>
-                        Login
-                      </DropdownItem>
-                      <DropdownItem to="/register-page" tag={Link}>
-                        Register
-                      </DropdownItem>
-                    </DropdownMenu>
-                  </UncontrolledDropdown>
-                
-                  <NavItem className="d-none d-lg-block ml-lg-4">
-                    <Button
-                      className="btn-neutral btn-icon"
-                      color="default"
-                      href="/login"
-                    >
-                      <span className="nav-link-inner--text ml-1">
-                        Login
+                  <span>
+                    <i className="ni ni-collection d-lg-none mr-1 custom-icon-link" />
+                    <Link to="/recipes" className="custom-nav-link">Explore Recipes</Link>
+                  </span>
+
+                  {this.state.logged.status ? 
+                    <>
+                      <UncontrolledDropdown nav>
+                        <DropdownToggle nav>
+                          <i className="ni ni-collection d-lg-none mr-1 custom-icon-link" />
+                          <span className="nav-link-inner--text">Hi, {this.state.logged.name}!</span>
+                        </DropdownToggle>
+                        <DropdownMenu>
+                          <DropdownItem to="/landing-page" tag={Link}>
+                            Landing
+                          </DropdownItem>
+                          <DropdownItem to="/profile-page" tag={Link}>
+                            Profile
+                          </DropdownItem>
+                          <DropdownItem to="/login-page" tag={Link}>
+                            Login
+                          </DropdownItem>
+                          <DropdownItem to="/register-page" tag={Link}>
+                            Register
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </UncontrolledDropdown>
+                      <span className="display-only-mobile">
+                        <i className="ni ni-collection d-lg-none mr-1 custom-icon-link" />
+                        <span onClick={()=>this.logout()} className="custom-nav-link">Logout</span>
                       </span>
-                    </Button>
-                  </NavItem>
+                      <NavItem className="d-none d-lg-block ml-lg-4">
+                        <Button
+                          className="btn-neutral btn-icon"
+                          color="default"
+                          onClick={()=>this.logout()}
+                        >
+                          <span className="nav-link-inner--text ml-1">
+                            Logout
+                          </span>
+                        </Button>
+                      </NavItem>
+                    </>
+
+                    :
+
+                    <>
+                      <span className="display-only-mobile" style={{padding:'0.625rem 0'}}>
+                        <i className="ni ni-collection d-lg-none mr-1 custom-icon-link" />
+                        <Link to="/login" className="custom-nav-link">Login</Link>
+                      </span>
+                      <NavItem className="d-none d-lg-block ml-lg-4">
+                        <Link
+                          className="btn-neutral btn-icon btn btn-default"
+                          color="default"
+                          to="/login"
+                        >
+                          <span className="nav-link-inner--text ml-1">
+                            Login
+                          </span>
+                        </Link>
+                      </NavItem>
+                    </>
+
+
+                  }
                 </Nav>
               </UncontrolledCollapse>
             </Container>

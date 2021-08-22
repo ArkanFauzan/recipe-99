@@ -15,13 +15,14 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React,{createContext} from "react";
+import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
 import "assets/vendor/nucleo/css/nucleo.css";
 import "assets/vendor/font-awesome/css/font-awesome.min.css";
 import "assets/scss/argon-design-system-react.scss?v1.1.0";
+import "assets/css/custom-css.css";
 
 import Index from "views/Index.js";
 import Landing from "views/pages/Landing.js";
@@ -29,13 +30,36 @@ import Login from "views/pages/Login.js";
 import Profile from "views/pages/Profile.js";
 import Register from "views/pages/Register.js";
 
-export const GlobalContext = createContext({BASE_URL: "http://localhost:5000"});
+import {GlobalContext} from './GlobalContext';
+import {cookie} from './function/cookie';
+
+const validateNoAuth = (page)=>{
+  const token = cookie.getCookie('token');
+  const id = cookie.getCookie('id');
+  if(token==='' && id===''){
+    return page;
+  }
+  else{
+    return window.location.href = '/recipes'
+  }
+}
+
+// const validateWithAuth = (page)=>{
+//   const token = cookie.getCookie('token');
+//   const id = cookie.getCookie('id');
+//   if(token!=='' && id!==''){
+//     return page;
+//   }
+//   else{
+//     return window.location.href = '/login'
+//   }
+// }
 
 ReactDOM.render(
-  <GlobalContext.Provider value={{BASE_URL: "http://localhost:5000"}}>
+  <GlobalContext.Provider value={{BASE_URL: "http://localhost:5000",cookie}}>
     <BrowserRouter>
       <Switch>
-        <Route path="/" exact render={props => <Index {...props} />} />
+        <Route path="/recipes" exact render={props => <Index {...props} />} />
         <Route
           path="/landing-page"
           exact
@@ -50,19 +74,19 @@ ReactDOM.render(
         <Route
           path="/register"
           exact
-          render={props => <Register {...props} />}
+          render={()=>validateNoAuth(<Register/>) }
         />
         <Route
           path="/login"
           exact
-          render={props => <Login {...props} />}
+          render={()=> validateNoAuth(<Login/>) }
         />
         <Route
           path="/recipes"
           exact
           render={props => <>Halloo</>}
         />
-        <Redirect to="/" />
+        <Redirect to="/recipes" />
       </Switch>
     </BrowserRouter>
   </GlobalContext.Provider>,
