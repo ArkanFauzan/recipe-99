@@ -53,10 +53,10 @@ class DemoNavbar extends React.Component {
     collapseClasses: "",
     collapseOpen: false,
     logged: {
-      status: false,
-      id: "halo",
-      name: "",
-      email: ""
+      status: this.context.cookie.getCookie('token') || '',
+      id: this.context.cookie.getCookie('id'),
+      name: this.context.cookie.getCookie('name'),
+      email: this.context.cookie.getCookie('email')
     }
   };
 
@@ -96,6 +96,8 @@ class DemoNavbar extends React.Component {
           }
         )
       }
+    }).catch(e=>{
+      this.logout();
     })
   }
 
@@ -171,20 +173,14 @@ class DemoNavbar extends React.Component {
                       <UncontrolledDropdown nav>
                         <DropdownToggle nav>
                           <i className="ni ni-collection d-lg-none mr-1 custom-icon-link" />
-                          <span className="nav-link-inner--text">Hi, {this.state.logged.name}!</span>
+                          <span className="nav-link-inner--text">Hi, {this.state.logged.name} <i className="ni ni-bold-down"></i></span>
                         </DropdownToggle>
                         <DropdownMenu>
-                          <DropdownItem to="/landing-page" tag={Link}>
-                            Landing
+                          <DropdownItem to="/my-recipes" tag={Link}>
+                            My Recipes
                           </DropdownItem>
-                          <DropdownItem to="/profile-page" tag={Link}>
-                            Profile
-                          </DropdownItem>
-                          <DropdownItem to="/login-page" tag={Link}>
-                            Login
-                          </DropdownItem>
-                          <DropdownItem to="/register-page" tag={Link}>
-                            Register
+                          <DropdownItem to="/add-recipes" tag={Link}>
+                            Add New Recipes
                           </DropdownItem>
                         </DropdownMenu>
                       </UncontrolledDropdown>

@@ -17,6 +17,23 @@
     display: none !important;
 }
 
+.container-recipe-form{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f5f7f9;
+    padding: 30px;
+    border-radius: 10px;
+}
+
+.text-bold{
+    font-weight: 900 !important;
+}
+
+.no-uppercase{
+    text-transform: none !important;
+}
+
 @media (max-width: 991.98px){
     .custom-nav-link{
         left: 0.25rem;
