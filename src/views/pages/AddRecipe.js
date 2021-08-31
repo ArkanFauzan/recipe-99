@@ -203,9 +203,8 @@ const AddRecipe = ()=>{
           'content-type': 'multipart/form-data'
         }
       }).then(res=>{
-        setName(''); setIngredients([{ingredient: ''},{ingredient: ''}]); setCookingSteps([{step: ''}]);
-        setFile([]);
-        alert('Upload recipe success')
+        alert('Upload recipe success');
+        window.location.href = '/add-recipes'
       }).catch(error=>{
 
       })

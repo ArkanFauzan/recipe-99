@@ -89,7 +89,7 @@ const Login = ()=>{
         }
       }).catch(error=>{
         setErr({
-          email: err.email,
+          email: {status:false, message:''},
           password: {status: true, message: error.response.data.message}
         })
       })
