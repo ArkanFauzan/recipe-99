@@ -326,6 +326,7 @@ const AddRecipe = ()=>{
                                 <Col sm={4} key={idx}>
                                   <div style={{width:'100%',position:'relative', paddingTop:'100%', overflow: 'hidden'}}>
                                     <button className="btn btn-sm btn-danger" 
+                                            type="button"
                                             style={{position:'absolute',top:0, right:0, zIndex:10, margin:0}}
                                             onClick={()=>deleteFile(idx)}> X
                                     </button>

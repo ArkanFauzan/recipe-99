@@ -24,12 +24,12 @@ import "./assets/vendor/font-awesome/css/font-awesome.min.css";
 import "./assets/scss/argon-design-system-react.scss?v1.1.0";
 import "./assets/css/custom-css.css";
 
-import Index from "./views/Index.js";
 import Landing from "./views/pages/Landing.js";
 import Login from "./views/pages/Login.js";
 import Profile from "./views/pages/Profile.js";
 import Register from "./views/pages/Register.js";
 import AddRecipe from "./views/pages/AddRecipe";
+import Recipes from './views/pages/Recipes';
 
 import {GlobalContext} from './GlobalContext';
 import {cookie} from './function/cookie';
@@ -56,11 +56,12 @@ const validateMustAuth = (page)=>{
   }
 }
 
+const arrRecipes = []; 
+
 ReactDOM.render(
-  <GlobalContext.Provider value={{BASE_URL: "https://recipe-99.herokuapp.com",cookie}}>
+  <GlobalContext.Provider value={{BASE_URL: "https://recipe-99.herokuapp.com",cookie, arrRecipes}}>
     <BrowserRouter>
       <Switch>
-        <Route path="/recipes" exact render={props => <Index {...props} />} />
         <Route
           path="/landing-page"
           exact
@@ -85,7 +86,7 @@ ReactDOM.render(
         <Route
           path="/recipes"
           exact
-          render={props => <>Halloo</>}
+          render={() => <Recipes/>}
         />
         <Route
           path="/add-recipes"
