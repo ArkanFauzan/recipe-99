@@ -18,11 +18,13 @@
 import React, {useEffect, useContext, useState} from "react";
 import {GlobalContext} from '../../GlobalContext';
 import axios from 'axios';
+import {Link} from 'react-router-dom';
 
 // reactstrap components
 import {
   Button,
   Card,
+  CardHeader,
   CardBody,
   Container,
   Row,
@@ -33,28 +35,31 @@ import {
 import DemoNavbar from "components/Navbars/DemoNavbar.js";
 import CardsFooter from "components/Footers/CardsFooter.js";
 
-const Recipes = ()=>{
-  const {BASE_URL, arrRecipes} = useContext(GlobalContext);
+const MyRecipes = ()=>{
+  const {BASE_URL, cookie, arrRecipes} = useContext(GlobalContext);
+  // const [myRecipes, setMyRecipes] = useState([]); //list of my recipes
+  // list of my recipes when search. data always filtered
+  // if search=false, then filtered recipe is full data
+  const [filteredMyRecipes, setFilteredMyRecipes] = useState([]); 
 
-  const [filteredRecipes, setFilteredRecipes] = useState([]);
-
-  
   useEffect(()=>{
     const source = axios.CancelToken.source();
-      axios.get(`${BASE_URL}/recipes`, {cancelToken: source.token}).then(res=>{
-        arrRecipes.splice(0,arrRecipes.length);
-        for(const recipe of res.data.recipes){
-          arrRecipes.push(recipe);
+      axios.get(`${BASE_URL}/recipes`).then(res=>{
+        const recipes = [];
+        for(const recipe of res.data.recipes){  
+            // to only show the post who posted by the user
+            if(recipe.user_id===cookie.getCookie('id')){
+                recipes.push(recipe);
+            }
         }
-        setFilteredRecipes([...arrRecipes])
+        // setMyRecipes([...recipes]);
+        setFilteredMyRecipes([...recipes]);
         source.cancel()
-      })
-      .catch(err=>{
+      }).catch(err=>{
         if(axios.isCancel(err)) return;
-      }) 
-
+      })
     return ()=>source.cancel();
-  },[BASE_URL, arrRecipes]);
+  },[BASE_URL, arrRecipes, cookie]);
 
   return (
     <>
@@ -79,8 +84,8 @@ const Recipes = ()=>{
                 <Row>
                   <Col lg="6">
                     <h1 className="display-3 text-white">
-                      Explore Recipes{" "}
-                      <span className="display-4">Find Your Favourite Recipe</span>
+                      My Recipes{" "}
+                      <span className="display-4">You Can See and Edit Your Recipes</span>
                     </h1>
                     <p className="lead text-white">
                     </p>
@@ -112,10 +117,16 @@ const Recipes = ()=>{
             <Row className="justify-content-center">
               <Col lg="12">
                 <Row className="row-grid">
-                  {filteredRecipes.map((recipe, idx)=>{
+                  {filteredMyRecipes.map((recipe, idx)=>{
                     return(
                       <Col lg="4" key={idx} className="mb-4">
                         <Card className="card-lift--hover shadow border-0">
+                          <CardHeader className="text-right">
+                            <Link className="mr-2" to={`/my-recipe/${recipe.name.replace(/\s/g,'-')}/${recipe.id}/edit`}>
+                              <button type="button" className="btn btn-sm btn-warning">Edit <i className="fa fa-pencil"></i></button>
+                            </Link>
+                            <button type="button" className="btn btn-sm btn-danger">hapus <i className="fa fa-trash-o"></i></button>
+                          </CardHeader>
                           <CardBody className="py-5">
                             <div style={{width:'100%',position:'relative', paddingTop:'75%', overflow: 'hidden'}}>
                               <img src={recipe.recipe_photos[0].secure_url}
@@ -131,7 +142,7 @@ const Recipes = ()=>{
                                     const textLower = value.toLowerCase();
                                     const text0 = value[0].toUpperCase();
                                     return `${text0}${textLower.substring(1, textLower.length)}`
-                                    }).join(' ')}
+                                    }).join(' ')} (me)
                                 </span>
                               </h6>
                             </div>
@@ -159,4 +170,4 @@ const Recipes = ()=>{
   )
 }
 
-export default Recipes;
+export default MyRecipes;

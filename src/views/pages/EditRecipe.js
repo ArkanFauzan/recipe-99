@@ -15,10 +15,12 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React,{useState, useContext} from "react";
+import React,{useState, useEffect, useContext} from "react";
 import {GlobalContext} from '../../GlobalContext';
 import '../../assets/css/custom-css.css'
 import axios from 'axios';
+import {useParams} from 'react-router-dom';
+import {toDataURL,dataURLtoFile} from '../../function/imgSrcToFile';
 
 // reactstrap components
 import {
@@ -40,8 +42,9 @@ import {
 import DemoNavbar from "components/Navbars/DemoNavbar.js";
 import SimpleFooter from "components/Footers/SimpleFooter";
 
-const AddRecipe = ()=>{
+const EditRecipe = ()=>{
   const {BASE_URL, cookie} = useContext(GlobalContext);
+  const {id} = useParams();
 
   const [name, setName] = useState('');
   const [ingredients, setIngredients] = useState([
@@ -58,6 +61,39 @@ const AddRecipe = ()=>{
     cookingSteps:false,
     file: {status:false, message:''}
   })
+
+//   get data recipe
+  useEffect(()=>{
+    const source = axios.CancelToken.source();
+      axios.get(`${BASE_URL}/my-recipe/${id}`, {
+        cancelToken: source.token,
+        headers:{
+          'token' : cookie.getCookie('token')
+        }
+      })
+      .then(async res=>{
+        const {name, ingredients, cooking_steps, recipe_photos} = res.data.recipe;
+        setName(name); setIngredients(ingredients); setCookingSteps(cooking_steps);
+        const arrPhoto = [];
+        for(const photo of recipe_photos){
+            // convert url photo to javascript object
+            await toDataURL(photo.secure_url)
+            .then(dataUrl => {
+                let array = photo.secure_url.split('.');
+                let extension = array[array.length-1];
+                let fileData = dataURLtoFile(dataUrl, `file image.${extension}`);
+                arrPhoto.push({file:fileData, src: URL.createObjectURL(fileData)})
+            })
+        }
+        setFile([...arrPhoto]);
+        source.cancel()
+      })
+      .catch(err=>{
+        if(axios.isCancel(err)) return;
+      }) 
+
+    return ()=>source.cancel();
+  },[BASE_URL, cookie, id]);
 
   const showIngredients = ()=>{
     return (ingredients.map((ingredient,idx)=>{return(
@@ -185,6 +221,7 @@ const AddRecipe = ()=>{
   const handleSubmit = async()=>{
     const valid = validate();
     if(valid){
+        console.log(file);
       const formData = new FormData();
       formData.append('name', name);
       formData.append('ingredients', JSON.stringify(ingredients));
@@ -193,14 +230,14 @@ const AddRecipe = ()=>{
         formData.append('recipe_photos', image.file);
       }
 
-      await axios.post(`${BASE_URL}/recipes`, formData, {
+      await axios.put(`${BASE_URL}/recipes/${id}`, formData, {
         headers:{
           'token' : cookie.getCookie('token'),
           'content-type': 'multipart/form-data'
         }
       }).then(res=>{
-        alert('Upload recipe success');
-        window.location.href = '/add-recipes'
+        alert('Update recipe success');
+        window.location.href = '/my-recipes'
       }).catch(error=>{
 
       })
@@ -279,7 +316,7 @@ const AddRecipe = ()=>{
                   <Card className="bg-secondary shadow border-0">
                     <CardBody className="px-lg-5 pt-lg-4 pb-lg-3">
                       <div className="text-center mb-4">
-                        <p className="text-bold">Add New Recipe</p>
+                        <p className="text-bold">Edit Recipe</p>
                       </div>
                       <Form role="form">
                         <FormGroup>
@@ -340,7 +377,7 @@ const AddRecipe = ()=>{
                             type="button"
                             onClick={()=>{handleSubmit()}}
                           >
-                            Post
+                            Save
                           </Button>
                         </div>
                       </Form>
@@ -358,4 +395,4 @@ const AddRecipe = ()=>{
   )
 }
 
-export default AddRecipe;
+export default EditRecipe;
