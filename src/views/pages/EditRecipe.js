@@ -89,7 +89,12 @@ const EditRecipe = ()=>{
         source.cancel()
       })
       .catch(err=>{
-        if(axios.isCancel(err)) return;
+          if(err.response.status===401){
+              window.location.href='/my-recipes'
+          }else{
+              alert('something error')
+          }
+          if(axios.isCancel(err)) return;
       }) 
 
     return ()=>source.cancel();
