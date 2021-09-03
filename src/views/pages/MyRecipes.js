@@ -72,10 +72,13 @@ const MyRecipes = ()=>{
       })
       .then(res=>{
         if(res.status===200){
-          window.location.href = '/my-recipes'
+          const currentRecipes = [...filteredMyRecipes];
+          const recipes = currentRecipes.filter((recipe)=>recipe.id!==id);
+          setFilteredMyRecipes([...recipes]);
         }
       })
       .catch(err=>{
+        alert('Something error')
       })
     }
   }
