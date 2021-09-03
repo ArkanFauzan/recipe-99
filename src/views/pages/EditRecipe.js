@@ -226,7 +226,6 @@ const EditRecipe = ()=>{
   const handleSubmit = async()=>{
     const valid = validate();
     if(valid){
-        console.log(file);
       const formData = new FormData();
       formData.append('name', name);
       formData.append('ingredients', JSON.stringify(ingredients));
@@ -317,7 +316,7 @@ const EditRecipe = ()=>{
             </div>
             <Container className="pt-lg-3">
               <Row className="justify-content-center">
-                <Col lg="8" md="8" xs="10">
+                <Col lg="8" md="8" xs="12">
                   <Card className="bg-secondary shadow border-0">
                     <CardBody className="px-lg-5 pt-lg-4 pb-lg-3">
                       <div className="text-center mb-4">

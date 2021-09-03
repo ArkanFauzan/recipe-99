@@ -39,7 +39,7 @@ import {
 
 // core components
 import DemoNavbar from "components/Navbars/DemoNavbar.js";
-import SimpleFooter from "components/Footers/SimpleFooter.js";
+import CardsFooter from "components/Footers/CardsFooter.js";
 
 // import package
 import axios from 'axios';
@@ -249,7 +249,7 @@ const Register = ()=>{
             </Container>
           </section>
         </main>
-        <SimpleFooter />
+        <CardsFooter />
       </>
   )
 }

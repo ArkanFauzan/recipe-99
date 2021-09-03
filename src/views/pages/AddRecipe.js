@@ -38,7 +38,7 @@ import {
 
 // core components
 import DemoNavbar from "components/Navbars/DemoNavbar.js";
-import SimpleFooter from "components/Footers/SimpleFooter";
+import CardsFooter from "components/Footers/CardsFooter";
 
 const AddRecipe = ()=>{
   const {BASE_URL, cookie} = useContext(GlobalContext);
@@ -275,7 +275,7 @@ const AddRecipe = ()=>{
             </div>
             <Container className="pt-lg-3">
               <Row className="justify-content-center">
-                <Col lg="8" md="8" xs="10">
+                <Col lg="8" md="8" xs="12">
                   <Card className="bg-secondary shadow border-0">
                     <CardBody className="px-lg-5 pt-lg-4 pb-lg-3">
                       <div className="text-center mb-4">
@@ -353,7 +353,7 @@ const AddRecipe = ()=>{
           {/* 1st Hero Variation */}
         </div>
       </main>
-      <SimpleFooter/>
+      <CardsFooter/>
     </>
   )
 }

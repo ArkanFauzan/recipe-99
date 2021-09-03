@@ -19,6 +19,7 @@ import React, {useEffect, useContext, useState} from "react";
 import {GlobalContext} from '../../GlobalContext';
 import axios from 'axios';
 import {Link} from 'react-router-dom';
+import {ucWords, slug} from '../../function/text';
 
 // reactstrap components
 import {
@@ -60,6 +61,24 @@ const MyRecipes = ()=>{
       })
     return ()=>source.cancel();
   },[BASE_URL, arrRecipes, cookie]);
+
+  const handleDelete = (id, recipeName)=>{
+    let q = window.confirm(`Do you want to delete ${recipeName}`)
+    if(q){
+      axios.delete(`${BASE_URL}/recipes/${id}`,{
+        headers:{
+          token: cookie.getCookie('token')
+        }
+      })
+      .then(res=>{
+        if(res.status===200){
+          window.location.href = '/my-recipes'
+        }
+      })
+      .catch(err=>{
+      })
+    }
+  }
 
   return (
     <>
@@ -117,15 +136,21 @@ const MyRecipes = ()=>{
             <Row className="justify-content-center">
               <Col lg="12">
                 <Row className="row-grid">
+                  {filteredMyRecipes.length===0 && 
+                    <Col lg="5" className="mb-4">
+                      <h1 className="display-3 text-white">
+                      <span className="display-4">You Don't Have Any Recipe</span>
+                    </h1>
+                    </Col>}
                   {filteredMyRecipes.map((recipe, idx)=>{
                     return(
                       <Col lg="4" key={idx} className="mb-4">
                         <Card className="card-lift--hover shadow border-0">
                           <CardHeader className="text-right">
-                            <Link className="mr-2" to={`/my-recipe/${recipe.name.replace(/\s/g,'-')}/${recipe.id}/edit`}>
+                            <Link className="mr-2" to={`/my-recipe/${slug(recipe.name)}/${recipe.id}/edit`}>
                               <button type="button" className="btn btn-sm btn-warning">Edit <i className="fa fa-pencil"></i></button>
                             </Link>
-                            <button type="button" className="btn btn-sm btn-danger">hapus <i className="fa fa-trash-o"></i></button>
+                            <button type="button" className="btn btn-sm btn-danger" onClick={()=>handleDelete(recipe.id, recipe.name)}>Hapus <i className="fa fa-trash-o"></i></button>
                           </CardHeader>
                           <CardBody className="py-5">
                             <div style={{width:'100%',position:'relative', paddingTop:'75%', overflow: 'hidden'}}>
@@ -138,22 +163,19 @@ const MyRecipes = ()=>{
                               <h6 className={`${idx%3===0 ? 'text-primary':(idx%3===1 ? 'text-success':'text-warning')}`}>
                                 <span className="text-uppercase">{recipe.name}</span> <br/>
                                 <span style={{fontSize:'0.85rem'}}>
-                                  Posted by: {recipe.username.split(' ').map(value=>{
-                                    const textLower = value.toLowerCase();
-                                    const text0 = value[0].toUpperCase();
-                                    return `${text0}${textLower.substring(1, textLower.length)}`
-                                    }).join(' ')} (me)
+                                  Posted by: {ucWords(recipe.username)} (me)
                                 </span>
                               </h6>
                             </div>
-                            <Button
-                              className="mt-4"
-                              color={`${idx%3===0 ? 'primary': (idx%3===1 ? 'success':'warning')}`}
-                              href="#pablo"
-                              onClick={e => e.preventDefault()}
-                            >
-                              More detail
-                            </Button>
+                            <Link to={`/recipe/${slug(recipe.name)}/${recipe.id}`}>
+                              <Button
+                                className="mt-4"
+                                color={`${idx%3===0 ? 'primary': (idx%3===1 ? 'success':'warning')}`}
+                                type="button"
+                              >
+                                More detail
+                              </Button>
+                            </Link>
                           </CardBody>
                         </Card>
                       </Col>

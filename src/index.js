@@ -32,6 +32,7 @@ import AddRecipe from "./views/pages/AddRecipe";
 import EditRecipe from "./views/pages/EditRecipe";
 import Recipes from './views/pages/Recipes';
 import MyRecipes from './views/pages/MyRecipes';
+import ShowRecipe from './views/pages/ShowRecipe';
 
 import {GlobalContext} from './GlobalContext';
 import {cookie} from './function/cookie';
@@ -104,6 +105,11 @@ ReactDOM.render(
           path="/my-recipe/:recipeName/:id/edit"
           exact
           render={props => validateMustAuth(<EditRecipe/>)}
+        />
+        <Route
+          path="/recipe/:recipeName/:id"
+          exact
+          render={props => <ShowRecipe/>}
         />
         <Redirect to="/recipes" />
       </Switch>

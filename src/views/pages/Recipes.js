@@ -18,6 +18,8 @@
 import React, {useEffect, useContext, useState} from "react";
 import {GlobalContext} from '../../GlobalContext';
 import axios from 'axios';
+import {Link} from 'react-router-dom';
+import {ucWords, slug} from '../../function/text';
 
 // reactstrap components
 import {
@@ -127,22 +129,19 @@ const Recipes = ()=>{
                               <h6 className={`${idx%3===0 ? 'text-primary':(idx%3===1 ? 'text-success':'text-warning')}`}>
                                 <span className="text-uppercase">{recipe.name}</span> <br/>
                                 <span style={{fontSize:'0.85rem'}}>
-                                  Posted by: {recipe.username.split(' ').map(value=>{
-                                    const textLower = value.toLowerCase();
-                                    const text0 = value[0].toUpperCase();
-                                    return `${text0}${textLower.substring(1, textLower.length)}`
-                                    }).join(' ')}
+                                  Posted by: {ucWords(recipe.username)}
                                 </span>
                               </h6>
                             </div>
-                            <Button
-                              className="mt-4"
-                              color={`${idx%3===0 ? 'primary': (idx%3===1 ? 'success':'warning')}`}
-                              href="#pablo"
-                              onClick={e => e.preventDefault()}
-                            >
-                              More detail
-                            </Button>
+                            <Link to={`/recipe/${slug(recipe.name)}/${recipe.id}`}>
+                              <Button
+                                className="mt-4"
+                                color={`${idx%3===0 ? 'primary': (idx%3===1 ? 'success':'warning')}`}
+                                type="button"
+                              >
+                                More detail
+                              </Button>
+                            </Link>
                           </CardBody>
                         </Card>
                       </Col>
