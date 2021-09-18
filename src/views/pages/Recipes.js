@@ -126,7 +126,7 @@ const Recipes = ()=>{
                               />
                             </div>
                             <div className="mt-3">
-                              <h6 className={`${idx%3===0 ? 'text-primary':(idx%3===1 ? 'text-success':'text-warning')}`}>
+                              <h6 className='text-primary'>
                                 <span className="text-uppercase">{recipe.name}</span> <br/>
                                 <span style={{fontSize:'0.85rem'}}>
                                   Posted by: {ucWords(recipe.username)}
@@ -136,7 +136,7 @@ const Recipes = ()=>{
                             <Link to={`/recipe/${slug(recipe.name)}/${recipe.id}`}>
                               <Button
                                 className="mt-4"
-                                color={`${idx%3===0 ? 'primary': (idx%3===1 ? 'success':'warning')}`}
+                                color='primary'
                                 type="button"
                               >
                                 More detail

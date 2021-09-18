@@ -19,7 +19,7 @@ import React, {useEffect, useContext, useState} from "react";
 import {GlobalContext} from '../../GlobalContext';
 import axios from 'axios';
 import {Link} from 'react-router-dom';
-import {ucWords, slug} from '../../function/text';
+import {slug} from '../../function/text';
 
 // reactstrap components
 import {
@@ -163,17 +163,17 @@ const MyRecipes = ()=>{
                               />
                             </div>
                             <div className="mt-3">
-                              <h6 className={`${idx%3===0 ? 'text-primary':(idx%3===1 ? 'text-success':'text-warning')}`}>
+                              <h6 className='text-primary'>
                                 <span className="text-uppercase">{recipe.name}</span> <br/>
                                 <span style={{fontSize:'0.85rem'}}>
-                                  Posted by: {ucWords(recipe.username)} (me)
+                                  Posted by: Me
                                 </span>
                               </h6>
                             </div>
                             <Link to={`/recipe/${slug(recipe.name)}/${recipe.id}`}>
                               <Button
                                 className="mt-4"
-                                color={`${idx%3===0 ? 'primary': (idx%3===1 ? 'success':'warning')}`}
+                                color='primary'
                                 type="button"
                               >
                                 More detail

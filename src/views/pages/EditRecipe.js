@@ -224,7 +224,7 @@ const EditRecipe = ()=>{
   }
 
   const handleSubmit = async()=>{
-    const valid = validate();
+    const {valid, ingredients, cookingSteps} = validate();
     if(valid){
       const formData = new FormData();
       formData.append('name', name);
@@ -290,10 +290,14 @@ const EditRecipe = ()=>{
       file: errFile
     })
     if(errName || errIngredients || errCookingSteps || errFile.status){
-      return false;
+      return {valid:false};
     }
     else{
-      return true;
+      return {
+        valid:true,
+        ingredients: [...filteredIngredients], 
+        cookingSteps: [...filteredCookingSteps]
+      };
     }
   }
 
