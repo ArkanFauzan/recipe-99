@@ -60,7 +60,7 @@ const validateMustAuth = (page)=>{
 const arrRecipes = []; 
 
 ReactDOM.render(
-  <GlobalContext.Provider value={{BASE_URL: "https://recipe-99.herokuapp.com",cookie, arrRecipes}}>
+  <GlobalContext.Provider value={{BASE_URL: process.env.REACT_APP_BASE_URL,cookie, arrRecipes}}>
     <BrowserRouter>
       <Switch>
         <Route path="/login-page" exact render={props => <Login {...props} />} />
